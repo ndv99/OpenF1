@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,django,react
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,django,react
+# Created by https://www.toptal.com/developers/gitignore/api/venv,python,django,react
+# Edit at https://www.toptal.com/developers/gitignore?templates=venv,python,django,react
 
 ### Django ###
 *.log
@@ -268,4 +268,16 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/python,django,react
+### venv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+pip-selfcheck.json
+
+# End of https://www.toptal.com/developers/gitignore/api/venv,python,django,react

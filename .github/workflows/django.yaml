@@ -1,0 +1,2 @@
+- name: Heroku Django Deploy
+  uses: nyakaz73/heroku-django-deploy@v0.81

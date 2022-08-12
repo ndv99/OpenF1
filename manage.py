@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from venv import create
 
 
 def main():
@@ -15,6 +16,10 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    env_exists = os.path.exists(".env")
+    if not env_exists:
+        import createEnv
+        createEnv.create_env()
     execute_from_command_line(sys.argv)
 
 

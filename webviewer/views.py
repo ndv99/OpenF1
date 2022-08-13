@@ -4,6 +4,7 @@ from rest_framework import status
 import requests
 import json
 import fastf1
+import os
 
 def assemble_url(params, url):
     for p in params:
@@ -20,6 +21,8 @@ class Events(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
 
         headers = request.headers
+        if not os.path.isdir('server/fastf1_cache'):
+            os.mkdir('server/fastf1_cache')
         fastf1.Cache.enable_cache('server/fastf1_cache')
         try:
             year = int(headers['year'])
@@ -40,4 +43,3 @@ class Events(viewsets.ViewSet):
         event_names = schedule.EventName.values.tolist()
         res = { "events": event_names }
         return Response(res, status.HTTP_200_OK)
-        

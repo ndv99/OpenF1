@@ -1,24 +1,32 @@
 
 import { Select } from '@canonical/react-components';
-interface Props { }
 
-function YearSelector(props: Props) {
-    const { } = props
+
+const YearSelector = (props: any) => {
+    const setYear = props.setYear
+    
+    const handleChange =(event: any)=>{
+        setYear(event.target[event.target.selectedIndex].value)
+    }
+
     const createYearList2018toCurrentYear = () => {
-        const list = []
+
+        const list = [{value:0, label: "Select a year", disabled: true}]
+
         let year = parseInt(new Date().getFullYear().toString().substring(-2))
 
         do {
-            list.push({ value: year, label: year.toString() })
+            list.push({ value: year, label: year.toString() , disabled:false})
             year--;
         } while (year >= 2018)
 
         return list;
-
     }
+
+
     return (
         <div id="year-selector-wrapper">
-            <Select options={createYearList2018toCurrentYear()} />
+            <Select defaultValue={0} onChange={handleChange} options={createYearList2018toCurrentYear()} />
         </div>
     )
 }

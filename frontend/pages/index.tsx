@@ -19,7 +19,8 @@ const Home: NextPage = () => {
 
         <p className={styles.description}>
           Check our progress <a href='https://github.com/users/ndv99/projects/1'>here</a><br />
-          View the source code <a href='https://github.com/ndv99/FastF1_WebViewer'>here</a>
+          View the source code <a href='https://github.com/ndv99/FastF1_WebViewer'>here</a> <br/>
+          View the dev page <a href='/DevPage'>here</a>
         </p>
       </main>
 

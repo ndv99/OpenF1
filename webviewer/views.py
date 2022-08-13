@@ -29,7 +29,9 @@ class Events(viewsets.ViewSet):
         except ValueError:
             res = {'errorMessage': "Please send a valid integer for the year you want."}
             return Response(res, status.HTTP_400_BAD_REQUEST)
-            
+        except KeyError:
+            res = {'errorMessage': "Please provide the desired year as a header with key 'year'."}
+            return Response(res, status.HTTP_400_BAD_REQUEST)
 
         if year < 2018:
             res = {'errorMessage': "Telemetry is only available from 2018 onwards."}

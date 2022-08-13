@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@canonical/react-components": "^0.37.4",
-    "yarn": "^1.22.19"
-  }
-}

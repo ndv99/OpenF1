@@ -281,4 +281,6 @@ sketch
 pyvenv.cfg
 pip-selfcheck.json
 
+server/fastf1_cache
+
 # End of https://www.toptal.com/developers/gitignore/api/venv,python,django,react

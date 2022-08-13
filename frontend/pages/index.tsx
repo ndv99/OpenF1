@@ -1,7 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import styles from '../styles/Home.module.css'
+
 
 const Home: NextPage = () => {
   return (
@@ -19,7 +21,8 @@ const Home: NextPage = () => {
 
         <p className={styles.description}>
           Check our progress <a href='https://github.com/users/ndv99/projects/1'>here</a><br />
-          View the source code <a href='https://github.com/ndv99/FastF1_WebViewer'>here</a>
+          View the source code <a href='https://github.com/ndv99/FastF1_WebViewer'>here</a> <br/>
+          View the dev page <Link href="/DevPage"><a>here</a></Link>
         </p>
       </main>
 

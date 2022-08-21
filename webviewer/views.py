@@ -36,6 +36,11 @@ def get_year_from_request(headers):
     
     return error, year
 
+def enable_cache():
+    if not os.path.isdir('server/fastf1_cache'):
+        os.mkdir('server/fastf1_cache')
+    fastf1.Cache.enable_cache('server/fastf1_cache')
+
 # Create your views here.
 
 class Events(viewsets.ViewSet):
@@ -43,9 +48,7 @@ class Events(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
 
         headers = request.headers
-        if not os.path.isdir('server/fastf1_cache'):
-            os.mkdir('server/fastf1_cache')
-        fastf1.Cache.enable_cache('server/fastf1_cache')
+        enable_cache()
 
         error, year = get_year_from_request(headers)
 

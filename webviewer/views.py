@@ -107,7 +107,10 @@ class RaceLapChart(viewsets.ViewSet):
 
         for driver in drivers:
             results[driver] = session.get_driver(driver)['Position']
-            grid[driver] = session.get_driver(driver)['GridPosition']
+            gridpos = session.get_driver(driver)['GridPosition']
+            if gridpos == 0:
+                gridpos = 20
+            grid[driver] = gridpos
 
         lap_chart_data = {}
 

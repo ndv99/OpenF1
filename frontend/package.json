@@ -6,7 +6,8 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
     },
     "dependencies": {
         "@canonical/react-components": "^0.37.4",

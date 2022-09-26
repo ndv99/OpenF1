@@ -4,6 +4,8 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "semi": ["error", "always"],
-    "quotes": [2, "double"]
+    "quotes": [2, "double"],
+    "no-unused-vars": "warn",
+    "no-multiple-empty-lines": "warn"
   }
 }

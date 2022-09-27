@@ -10,7 +10,7 @@ const DevPage: NextPage = () => {
     const getEventsByYear = useCallback(() => {
         axios
             .get(
-                "https://fastf1-webviewer-api.herokuapp.com/api/events/", //TODO: add proxy instead of full api url
+                "https://openf1-api.herokuapp.com/api/events/", //TODO: add proxy instead of full api url
                 {
                     headers: {
                         year: year,

@@ -10,7 +10,7 @@ const DevPage: NextPage = () => {
     const getEventsByYear = useCallback(() => {
         axios
             .get(
-                `http://localhost:8000/api/events/?year=${year}`, //TODO: add proxy instead of full api url
+                `http://openf1.ncik-dv.com/api/events/?year=${year}`, //TODO: add proxy instead of full api url
             )
             .then(function (response: any) {
                 setEvents(response.data);

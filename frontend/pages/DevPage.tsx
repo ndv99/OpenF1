@@ -10,12 +10,7 @@ const DevPage: NextPage = () => {
     const getEventsByYear = useCallback(() => {
         axios
             .get(
-                "https://openf1-api.herokuapp.com/api/events/", //TODO: add proxy instead of full api url
-                {
-                    headers: {
-                        year: year,
-                    },
-                }
+                `http://localhost:8000/api/events/?year=${year}`, //TODO: add proxy instead of full api url
             )
             .then(function (response: any) {
                 setEvents(response.data);

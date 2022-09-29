@@ -22,6 +22,8 @@ Once you've installed these, fork this repository to your own account, and then 
 
 #### Backend
 
+*N.B: If you only plan on altering the front-end, you can skip this section.*
+
 1. In a terminal, navigate to the parent directory containing the OpenF1 folder.
 2. Create a virtual environment by running `python3 -m venv OpenF1`, then navigate into the OpenF1 directory
 3. Now you need to activate the environment.
@@ -44,6 +46,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 1. In your terminal, navigate to the `frontend` directory in the repository.
 2. Run `yarn install` to install the project dependencies.
+    
+    *2a. (Optional) If you skipped the backend setup, createa file called `.env.local` in the frontend directory, and paste the following code into it:*
+    ```env
+    NEXT_PUBLIC_QUERY_URL = https://openf1-api.herokuapp.com
+    ```
 3. Run the website using `yarn dev`
 4. Open `http://localhost:3000` with your browser to see the result.
 

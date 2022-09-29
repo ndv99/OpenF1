@@ -90,7 +90,7 @@ class Events(viewsets.ViewSet):
             return error
 
         enable_cache()
-        schedule = fastf1.get_event_schedule(year)
+        schedule = fastf1.get_event_schedule(year, include_testing=False)
         event_names = schedule.EventName.values.tolist()
         res = {"events": event_names}
         return Response(res, status.HTTP_200_OK)
@@ -112,7 +112,7 @@ class EventSessions(viewsets.ViewSet):
             return event_error
 
         enable_cache()
-        schedule = fastf1.get_event_schedule(year)
+        schedule = fastf1.get_event_schedule(year, include_testing=False)
         event = schedule.get_event_by_name(event_name)
         sessions = []
         for i in range(1,6):

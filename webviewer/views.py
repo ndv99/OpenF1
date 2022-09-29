@@ -9,6 +9,7 @@ import json
 import fastf1
 import os
 
+years = list(range(2018, 2023)) # range() is not inclusive for the max value
 
 def assemble_url(params, url):
     for p in params:
@@ -34,11 +35,11 @@ def get_year_from_request(params: QueryDict):
         error = Response(res, status.HTTP_400_BAD_REQUEST)
         return error, year
 
-    if year < 2018:
+    if year < min(years):
         res = {'errorMessage': "Telemetry is only available from 2018 onwards."}
-        error = Response(res, status.HTTP_400_BAD_REQUEST)
-
-    if year > 2022:
+        error =  Response(res, status.HTTP_400_BAD_REQUEST)
+    
+    if year > max(years):
         res = {'errorMessage': "It's still 2022, we can't predict the future!"}
         error = Response(res, status.HTTP_400_BAD_REQUEST)
 
@@ -69,6 +70,12 @@ def enable_cache():
     fastf1.Cache.enable_cache('server/fastf1_cache')
 
 # Create your views here.
+
+class Years(viewsets.ViewSet):
+
+    def list(self, request, *args, **kwargs):
+        res = { "years": years }
+        return Response(res, status.HTTP_200_OK)
 
 
 class Events(viewsets.ViewSet):

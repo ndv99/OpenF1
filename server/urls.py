@@ -21,6 +21,7 @@ from webviewer import views
 router = routers.DefaultRouter()
 router.register(r'events', views.Events, 'events')
 router.register(r'raceLapChart', views.RaceLapChart, 'raceLapChart')
+router.register(r'years', views.Years, 'years')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

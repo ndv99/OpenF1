@@ -116,7 +116,7 @@ class EventSessions(viewsets.ViewSet):
         event = schedule.get_event_by_name(event_name)
         sessions = []
         for i in range(1,6):
-            sessions.append(event.get_session_name(i))
+            sessions.append({"label": event.get_session_name(i), "value": i})
         
         res = { "sessions": sessions }
         return Response(res, status.HTTP_200_OK)

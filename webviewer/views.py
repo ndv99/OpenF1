@@ -95,11 +95,35 @@ class Events(viewsets.ViewSet):
         res = {"events": event_names}
         return Response(res, status.HTTP_200_OK)
 
+class EventSessions(viewsets.ViewSet):
+
+    def list(self, request: Request, *args, **kwargs):
+
+        params = request.query_params
+
+        year_error, year = get_year_from_request(params)
+
+        if year_error:
+            return year_error
+
+        event_error, event_name = get_event_from_request(params)
+
+        if event_error:
+            return event_error
+
+        enable_cache()
+        schedule = fastf1.get_event_schedule(year)
+        event = schedule.get_event_by_name(event_name)
+        sessions = []
+        for i in range(1,6):
+            sessions.append(event.get_session_name(i))
+        
+        res = { "sessions": sessions }
+        return Response(res, status.HTTP_200_OK)
 
 class RaceLapChart(viewsets.ViewSet):
     def list(self, request: Request, *args, **kwargs):
 
-        headers = request.query_params
         params = request.query_params
 
         year_error, year = get_year_from_request(params)

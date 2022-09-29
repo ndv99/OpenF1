@@ -19,7 +19,6 @@ def assemble_url(params, url):
             url = f"{url}{p}={params[p]}"
     return url
 
-
 def get_year_from_request(params: QueryDict):
     error = None
     year = None
@@ -45,7 +44,6 @@ def get_year_from_request(params: QueryDict):
 
     return error, year
 
-
 def get_event_from_request(params: QueryDict):
     error = None
     event = None
@@ -63,6 +61,21 @@ def get_event_from_request(params: QueryDict):
 
     return error, event
 
+def get_session_from_request(params: QueryDict):
+    error = None
+    session = None
+    try:
+        session = int(params['session'])
+    except KeyError:
+        res = {'errorMessage': "Please provide the name of the desired session as a parameter named 'session'."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
+        return error, session
+    except ValueError:
+        res = {'errorMessage': "Please send a valid integer for the session you want (e.g. 1 for FP1, 5 for Race etc)."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
+        return error, session
+
+    return error, session
 
 def enable_cache():
     if not os.path.isdir('server/fastf1_cache'):
@@ -76,7 +89,6 @@ class Years(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
         res = { "years": years }
         return Response(res, status.HTTP_200_OK)
-
 
 class Events(viewsets.ViewSet):
 
@@ -95,6 +107,40 @@ class Events(viewsets.ViewSet):
         res = {"events": event_names}
         return Response(res, status.HTTP_200_OK)
 
+class SessionDrivers(viewsets.ViewSet):
+
+    def list(self, request: Request, *args, **kwargs):
+
+        params = request.query_params
+
+        year_error, year = get_year_from_request(params)
+
+        if year_error:
+            return year_error
+
+        event_error, event_name = get_event_from_request(params)
+
+        if event_error:
+            return event_error
+        
+        session_error, session = get_session_from_request(params)
+
+        if session_error:
+            return session_error
+
+        enable_cache()
+        session = fastf1.get_session(year, event_name, session)
+        session.load()
+
+        drivers = pandas.unique(session.laps['Driver'])
+        session_drivers = []
+
+        for driver in drivers:
+            driver_data = session.get_driver(driver)
+            session_drivers.append({ "name": driver_data['FullName'], "abbreviation": driver })
+        
+        res = { "drivers": session_drivers }
+        return Response(res, status.HTTP_200_OK)
 
 class RaceLapChart(viewsets.ViewSet):
     def list(self, request: Request, *args, **kwargs):

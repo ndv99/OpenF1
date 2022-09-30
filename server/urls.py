@@ -23,6 +23,7 @@ router.register(r'events', views.Events, 'events')
 router.register(r'raceLapChart', views.RaceLapChart, 'raceLapChart')
 router.register(r'years', views.Years, 'years')
 router.register(r'eventSessions', views.EventSessions, 'eventSessions')
+router.register(r'sessionDrivers', views.SessionDrivers, 'sessionDrivers')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

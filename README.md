@@ -12,6 +12,10 @@ We welcome any contributions to this project, it's a lot of work for just two de
 
 All of our frontend code is written in TypeScript for NextJS (React), and our backend is written as a Django REST API in Python.
 
+We try to use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) for our pull requests, have a quick read of the summary and you should be ready to get started. Example PR title:
+
+`feat(API): Get all available years with telemetry` <-- This PR would represent an **API** **feat**ure, which implements an endpoint to fetch all years that have complete telemetry data
+
 ### Getting Started
 
 You'll need the following things installed first:

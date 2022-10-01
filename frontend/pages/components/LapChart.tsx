@@ -38,7 +38,9 @@ interface DriverDataset {
     borderColor: string;
 }
 function createDataObjectFromLapData(lapData: any) {
-    if (lapData.length < 1) {
+    console.log(lapData);
+
+    if (lapData == undefined || lapData.length < 1) {
         return false
     }
     const datasets = []
@@ -104,7 +106,12 @@ function compoundStringToColour(compoundString: string) {
     }
 }
 const LapChart: NextPage = (props: any) => { //TODO: endpoint data types
-    // console.log(props.lapData);
+    // TODO: SPINNER
+    if (props.lapData == undefined) {
+        return <div>Loading...</div>
+    }
+    console.log(props.lapData);
+
     const chart = useRef(null) //create reference hook
     const [tooltip, setTooltip] = useState({
         opacity: 0,
@@ -179,7 +186,7 @@ const LapChart: NextPage = (props: any) => { //TODO: endpoint data types
                 <p>Lap {tooltip.lap} </p>
                 <p>Position {tooltip.position} </p>
                 <p>Laptime: {tooltip.laptime} </p>
-                <p style={{ border:`3px solid ${compoundStringToColour(tooltip.compound)}`}}>Compound {tooltip.compound} </p>
+                <p style={{ border: `3px solid ${compoundStringToColour(tooltip.compound)}` }}>Compound {tooltip.compound} </p>
 
             </div>
         </div>

@@ -1,11 +1,15 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status
 from itertools import groupby
+from django.http.request import QueryDict
 import pandas
 import json
 import fastf1
 import os
+
+years = list(range(2018, 2023)) # range() is not inclusive for the max value
 
 def assemble_url(params, url):
     for p in params:
@@ -15,47 +19,63 @@ def assemble_url(params, url):
             url = f"{url}{p}={params[p]}"
     return url
 
-def get_year_from_request(headers):
+def get_year_from_request(params: QueryDict):
     error = None
     year = None
     try:
-        year = int(headers['year'])
+        year = int(params['year'])
     except ValueError:
         res = {'errorMessage': "Please send a valid integer for the year you want."}
-        error =  Response(res, status.HTTP_400_BAD_REQUEST)
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
         return error, year
     except KeyError:
-        res = {'errorMessage': "Please provide the desired year as a header with key 'year'."}
-        error =  Response(res, status.HTTP_400_BAD_REQUEST)
+        res = {
+            'errorMessage': "Please provide the desired year as a parameter named 'year'."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
         return error, year
 
-    if year < 2018:
+    if year < min(years):
         res = {'errorMessage': "Telemetry is only available from 2018 onwards."}
         error =  Response(res, status.HTTP_400_BAD_REQUEST)
     
-    if year > 2022:
+    if year > max(years):
         res = {'errorMessage': "It's still 2022, we can't predict the future!"}
-        error =  Response(res, status.HTTP_400_BAD_REQUEST)
-    
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
+
     return error, year
 
-def get_event_from_request(headers):
+def get_event_from_request(params: QueryDict):
     error = None
     event = None
     try:
-        event = headers['event']
+        event = params['event']
     except KeyError:
-        res = {'errorMessage': "Please provide the name of the desired event as a header with key 'event'."}
-        error =  Response(res, status.HTTP_400_BAD_REQUEST)
+        res = {'errorMessage': "Please provide the name of the desired event as a parameter named 'event'."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
         return error, event
-    
+
     if type(event) is not str:
-        res = {'errorMessage': "Please send a valid string for the name of the event you want."}
-        error =  Response(res, status.HTTP_400_BAD_REQUEST)
-    
+        res = {
+            'errorMessage': "Please send a valid string for the name of the event you want."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
+
     return error, event
-    
-    
+
+def get_session_from_request(params: QueryDict):
+    error = None
+    session = None
+    try:
+        session = int(params['session'])
+    except KeyError:
+        res = {'errorMessage': "Please provide the name of the desired session as a parameter named 'session'."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
+        return error, session
+    except ValueError:
+        res = {'errorMessage': "Please send a valid integer for the session you want (e.g. 1 for FP1, 5 for Race etc)."}
+        error = Response(res, status.HTTP_400_BAD_REQUEST)
+        return error, session
+
+    return error, session
 
 def enable_cache():
     if not os.path.isdir('server/fastf1_cache'):
@@ -64,38 +84,105 @@ def enable_cache():
 
 # Create your views here.
 
-class Events(viewsets.ViewSet):
+class Years(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
+        res = { "years": years }
+        return Response(res, status.HTTP_200_OK)
 
-        headers = request.headers
+class Events(viewsets.ViewSet):
 
-        error, year = get_year_from_request(headers)
+    def list(self, request: Request, *args, **kwargs):
+
+        params = request.query_params
+
+        error, year = get_year_from_request(params)
 
         if error:
             return error
-        
+
         enable_cache()
-        schedule = fastf1.get_event_schedule(year)
+        schedule = fastf1.get_event_schedule(year, include_testing=False)
         event_names = schedule.EventName.values.tolist()
-        res = { "events": event_names }
+        res = {"events": event_names}
         return Response(res, status.HTTP_200_OK)
 
-class RaceLapChart(viewsets.ViewSet):
-     def list(self, request, *args, **kwargs):
+class EventSessions(viewsets.ViewSet):
 
-        headers = request.headers
+    def list(self, request: Request, *args, **kwargs):
 
-        year_error, year = get_year_from_request(headers)
+        params = request.query_params
+
+        year_error, year = get_year_from_request(params)
 
         if year_error:
             return year_error
 
-        event_error, event = get_event_from_request(headers)
+        event_error, event_name = get_event_from_request(params)
+
+        if event_error:
+            return event_error
+           
+        enable_cache()
+        schedule = fastf1.get_event_schedule(year, include_testing=False)
+        event = schedule.get_event_by_name(event_name)
+        sessions = []
+        for i in range(1,6):
+            sessions.append({"label": event.get_session_name(i), "value": i})
+        
+        res = { "sessions": sessions }
+        return Response(res, status.HTTP_200_OK)
+
+class SessionDrivers(viewsets.ViewSet):
+
+    def list(self, request: Request, *args, **kwargs):
+
+        params = request.query_params
+
+        year_error, year = get_year_from_request(params)
+
+        if year_error:
+            return year_error
+
+        event_error, event_name = get_event_from_request(params)
 
         if event_error:
             return event_error
         
+        session_error, session = get_session_from_request(params)
+
+        if session_error:
+            return session_error
+
+        enable_cache()
+        session = fastf1.get_session(year, event_name, session)
+        session.load()
+
+        drivers = pandas.unique(session.laps['Driver'])
+        session_drivers = []
+
+        for driver in drivers:
+            driver_data = session.get_driver(driver)
+            session_drivers.append({ "name": driver_data['FullName'], "abbreviation": driver })
+        
+        res = { "drivers": session_drivers }
+        return Response(res, status.HTTP_200_OK)
+
+class RaceLapChart(viewsets.ViewSet):
+    def list(self, request: Request, *args, **kwargs):
+
+        params = request.query_params
+
+        year_error, year = get_year_from_request(params)
+
+        if year_error:
+            return year_error
+
+        event_error, event = get_event_from_request(params)
+
+        if event_error:
+            return event_error
+
         enable_cache()
         session = fastf1.get_session(year, event, "R")
         session.load()
@@ -107,7 +194,10 @@ class RaceLapChart(viewsets.ViewSet):
 
         for driver in drivers:
             results[driver] = session.get_driver(driver)['Position']
-            grid[driver] = session.get_driver(driver)['GridPosition']
+            gridpos = session.get_driver(driver)['GridPosition']
+            if gridpos == 0:
+                gridpos = 20
+            grid[driver] = gridpos
 
         lap_chart_data = {}
 
@@ -119,21 +209,21 @@ class RaceLapChart(viewsets.ViewSet):
                 "TeamColor": session.get_driver(driver)['TeamColor'],
                 "Compounds": [],
                 "LapTimes": [],
-                }
-        
+            }
 
         lapsobj = session.laps.iterlaps()
         all_laps = []
-        
+
         for lap in lapsobj:
-            all_laps.append({"LapNumber": lap[1]['LapNumber'], "Time": lap[1]['Time'], "Driver": lap[1]['Driver'], "Compounds": lap[1]['Compound'], "LapTimes": lap[1]['LapTime']})
-        
+            all_laps.append({"LapNumber": lap[1]['LapNumber'], "Time": lap[1]['Time'], "Driver": lap[1]
+                            ['Driver'], "Compounds": lap[1]['Compound'], "LapTimes": lap[1]['LapTime']})
+
         def sortLapsByNumber(lap):
             return lap["LapNumber"]
 
         def sortLapsByTime(lap):
             return lap["Time"]
-        
+
         all_laps.sort(key=sortLapsByNumber)
 
         for key, value in groupby(all_laps, sortLapsByNumber):
@@ -145,6 +235,6 @@ class RaceLapChart(viewsets.ViewSet):
                 lap_chart_data[v['Driver']]['Laps'].append(v['LapNumber'])
                 lap_chart_data[v['Driver']]['Compounds'].append(v['Compounds'])
                 lap_chart_data[v['Driver']]['LapTimes'].append(v['LapTimes'])
-            
-        res = { "lapChartData": lap_chart_data }
+
+        res = {"lapChartData": lap_chart_data}
         return Response(res, status.HTTP_200_OK)

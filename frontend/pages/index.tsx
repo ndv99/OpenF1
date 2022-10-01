@@ -1,8 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import styles from "../styles/Home.module.css";
 
 
 const Home: NextPage = () => {
@@ -21,7 +21,7 @@ const Home: NextPage = () => {
 
         <p className={styles.description}>
           Check our progress <a href='https://github.com/users/ndv99/projects/1'>here</a><br />
-          View the source code <a href='https://github.com/ndv99/FastF1_WebViewer'>here</a> <br/>
+          View the source code <a href='https://github.com/ndv99/OpenF1'>here</a> <br/>
           View the dev page <Link href="/DevPage"><a>here</a></Link>
         </p>
       </main>
@@ -32,14 +32,14 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

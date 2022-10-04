@@ -21,6 +21,8 @@ We try to use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0
 You'll need the following things installed first:
 - [Python](https://www.python.org/downloads/) (>=3.10.4)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable)
+- [NodeJS](https://nodejs.org/en/download/)
+  - [(On Linux)](https://github.com/nvm-sh/nvm)
 
 Once you've installed these, fork this repository to your own account, and then clone it to your system.
 

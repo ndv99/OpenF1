@@ -1,12 +1,12 @@
 import YearSelector from "./components/YearSelector";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
-import LapChart from './components/LapChart';
+import LapChart from "./components/LapChart";
 
 const DevPage: NextPage = () => {
     const [year, setYear] = useState(0);
     const [events, setEvents] = useState([]);
-    const [raceData, setRaceData] = useState({})
+    const [raceData, setRaceData] = useState(null);
     const axios = require("axios").default;
 
     const getEventsByYear = useCallback(() => {
@@ -36,19 +36,25 @@ const DevPage: NextPage = () => {
         }
         //TODO: setevents
     }, [events, year]);
+    if (raceData == null) {
+        console.log("getting");
+        
+        axios.get("/api/raceLapChart/?year=2022&event=Belgium")
+            .then(
+                function (response: any) {
+                    setRaceData(response.data)
+                    console.log("got data", response);
 
-    axios.get('/api/raceLapChart/?year=2022&event=Belgium')
-        .then(
-            function (response: any) {
-                setRaceData(response.data)
-                console.log("got data", response);
-
-            }
-        )
-        .catch(function (error: any) {
-            setRaceData({});
-            console.error('Unable to get dummy race data')
-        });
+                }
+            )
+            .catch(function (error: any) {
+                setRaceData(null);
+                console.error("Unable to get dummy race data");
+            });
+    }else{
+        console.log("not getting");
+        
+    }
 
 
     return (

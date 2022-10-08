@@ -43,7 +43,7 @@ function createDataObjectFromLapData(lapData: any) {
     if (lapData == undefined || lapData.length < 1) {
         return false;
     }
-    const datasets = [];
+    const datasets: { label: string; data: number[]; backgroundColor: string; borderColor: string; borderWidth: number; borderDash: number[]; pointRadius: number; pointBorderColor: string; pointBackgroundColor: string; pointHoverBorderColor: string; pointHoverBackgroundColor: string; }[] = [];
     const labels = []; // laps
     const encounteredTeams: string[] = [];
     //console.log("createDataObj", lapData);
@@ -112,7 +112,9 @@ const LapChart: NextPage = (props: any) => { //TODO: endpoint data types
     }
     console.log(props.lapData);
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const chart = useRef(null); //create reference hook
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [tooltip, setTooltip] = useState({
         opacity: 0,
         top: 0,

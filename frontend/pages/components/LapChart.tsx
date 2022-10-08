@@ -38,7 +38,6 @@ interface DriverDataset {
     borderColor: string;
 }
 function createDataObjectFromLapData(lapData: any) {
-    console.log(lapData);
     
     if (lapData == undefined || lapData.length < 1) {
         return false;
@@ -46,12 +45,10 @@ function createDataObjectFromLapData(lapData: any) {
     const datasets: { label: string; data: number[]; backgroundColor: string; borderColor: string; borderWidth: number; borderDash: number[]; pointRadius: number; pointBorderColor: string; pointBackgroundColor: string; pointHoverBorderColor: string; pointHoverBackgroundColor: string; }[] = [];
     const labels = []; // laps
     const encounteredTeams: string[] = [];
-    //console.log("createDataObj", lapData);
 
     let maxLaps = [0];
     const lapDataArray = Object.entries(lapData);
     lapDataArray.forEach((driverEntry: any) => {
-        //console.log(driverEntry);
         const smallLabel: string = driverEntry[0];
         const driverLapData: DriverLapDataType = driverEntry[1];
         if (driverLapData.Laps.length > maxLaps.length) {
@@ -77,8 +74,6 @@ function createDataObjectFromLapData(lapData: any) {
             pointHoverBackgroundColor: `#${driverLapData.TeamColor}`,
 
         });
-        // console.log(datasets);
-
     });
     let testDataset = {
         label: "My First dataset",
@@ -107,10 +102,9 @@ function compoundStringToColour(compoundString: string) {
 }
 const LapChart: NextPage = (props: any) => { //TODO: endpoint data types
     // TODO: SPINNER
-    if (props.lapData == undefined) {
-        return <div>Loading...</div>;
+    if (!!Object.entries(props.lapData)) {
+        return <div style={{color: "red"}}>NO LAP DATA</div>;
     }
-    console.log(props.lapData);
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const chart = useRef(null); //create reference hook
@@ -129,12 +123,10 @@ const LapChart: NextPage = (props: any) => { //TODO: endpoint data types
     });
     const lapData = createDataObjectFromLapData(props.lapData);
     const title: string = props.name;
-    //console.log(title);
-    // console.log(tooltip);
 
     return (
         <div id='lap-chart-wrapper'>
-
+            
             <Line data={lapData} ref={chart}
                 options={{
 
@@ -152,7 +144,6 @@ const LapChart: NextPage = (props: any) => { //TODO: endpoint data types
                                     return;
                                 }
                                 const position = context.chart.canvas.getBoundingClientRect();
-                                console.log("test", tooltipModel.dataPoints);
                                 const longname = props.lapData[tooltipModel.dataPoints[0].dataset.label].Name;
                                 const compound = props.lapData[tooltipModel.dataPoints[0].dataset.label].Compounds[tooltipModel.dataPoints[0].dataIndex];
                                 const laptime = props.lapData[tooltipModel.dataPoints[0].dataset.label].LapTimes[tooltipModel.dataPoints[0].dataIndex];

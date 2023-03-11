@@ -6,28 +6,28 @@ import LapChart from "./components/LapChart";
 const DevPage: NextPage = () => {
     const [year, setYear] = useState(0);
     const [events, setEvents] = useState([]);
-    const [raceData, setRaceData] = useState({lapChartData:{}});
+    const [raceData, setRaceData] = useState({ lapChartData: {} });
     const axios = require("axios").default;
 
-    const getEventsByYear = useCallback(() => {
-        axios
-            .get(
-                `/api/events/?year=${year}`,
-            )
-            .then(function (response: any) {
-                setEvents(response.data);
-            })
-            .catch(function (error: any) {
-                setEvents([]);
-                console.error("Unable to get events for: ", year, error);
-            });
-    }, [axios, year]);
-    useEffect(() => {
-        if (year === 0) {
-            return;
-        }
-        getEventsByYear();
-    }, [year, getEventsByYear]);
+    // const getEventsByYear = useCallback(() => {
+    //     axios
+    //         .get(
+    //             `/api/events/?year=${year}`,
+    //         )
+    //         .then(function (response: any) {
+    //             setEvents(response.data);
+    //         })
+    //         .catch(function (error: any) {
+    //             setEvents([]);
+    //             console.error("Unable to get events for: ", year, error);
+    //         });
+    // }, [axios, year]);
+    // useEffect(() => {
+    //     if (year === 0) {
+    //         return;
+    //     }
+    //     getEventsByYear();
+    // }, [year, getEventsByYear]);
 
     useEffect(() => {
         if (year === 0) {
@@ -36,24 +36,22 @@ const DevPage: NextPage = () => {
         }
         //TODO: setevents
     }, [events, year]);
-    
+
     if (!Object.entries(raceData.lapChartData).length) {
-        
+
         axios.get("/api/raceLapChart/?year=2022&event=Belgium")
             .then(
                 function (response: any) {
                     setRaceData(response.data);
-                    console.log("got data", response);
+                    setYear(1); //hacky for linting
 
                 }
             )
             .catch(function (error: any) {
-                setRaceData({lapChartData:{}});
-                console.error("Unable to get dummy race data");
+                setRaceData({ lapChartData: {} });
             });
-    }else{
-        console.log("not getting");
-        
+    } else {
+
     }
 
     const lapDataProps = raceData.lapChartData;

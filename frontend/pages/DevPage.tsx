@@ -1,7 +1,7 @@
 // import YearSelector from "./components/YearSelector";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
-import LapChart from "./components/LapChart";
+import LapChart from "./components/LapChart/LapChart";
 
 const DevPage: NextPage = () => {
     const [year, setYear] = useState(0);

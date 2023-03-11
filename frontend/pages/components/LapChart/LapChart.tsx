@@ -1,4 +1,3 @@
-import type { NextPage } from "next";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -27,98 +26,11 @@ ChartJS.register(
 );
 import { Line } from "react-chartjs-2";
 import { useRef, useState } from "react";
+import { contextType, Driver, LapChartProps, Racers } from "./LapChartTypes";
+import { compoundStringToColour, createDataObjectFromLapData } from "./LapChartHelpers";
 
-function createDataObjectFromLapData(lapData: Racers) {
 
-    const datasets: { label: string; data: number[]; backgroundColor: string; borderColor: string; borderWidth: number; borderDash: number[]; pointRadius: number; pointBorderColor: string; pointBackgroundColor: string; pointHoverBorderColor: string; pointHoverBackgroundColor: string; }[] = [];
-    const encounteredTeams: string[] = [];
-
-    let maxLaps = [0];
-    const lapDataArray = Object.entries(lapData);
-    lapDataArray.forEach((driverEntry: any) => {
-        const smallLabel: string = driverEntry[0];
-        const driverLapData: Driver = driverEntry[1];
-        if (driverLapData.Laps.length > maxLaps.length) {
-            maxLaps = driverLapData.Laps;
-        }
-        let encounteredTeam = false;
-        if (encounteredTeams.includes(driverLapData.TeamColor)) {
-            encounteredTeam = true;
-        } else {
-            encounteredTeams.push(driverLapData.TeamColor);
-        }
-        datasets.push({
-            label: smallLabel,
-            data: driverLapData.Positions,
-            backgroundColor: `#${driverLapData.TeamColor}`,
-            borderColor: `#${driverLapData.TeamColor}`,
-            borderWidth: 1,
-            borderDash: encounteredTeam ? [5, 5] : [0, 0],
-            pointRadius: 10,
-            pointBorderColor: "rgba(0, 0, 0, 0)",
-            pointBackgroundColor: "rgba(0, 0, 0, 0)",
-            pointHoverBorderColor: `#${driverLapData.TeamColor}`,
-            pointHoverBackgroundColor: `#${driverLapData.TeamColor}`,
-
-        });
-    });
-    const data = {
-        labels: maxLaps,
-        datasets,
-    };
-    return data;
-}
-export interface Data {
-    labels: number[];
-    datasets: Dataset[];
-}
-
-export interface Dataset {
-    label: string;
-    data: number[];
-    backgroundColor: string;
-    borderColor: string;
-    borderWidth: number;
-    borderDash: number[];
-    pointRadius: number;
-    pointBorderColor: string;
-    pointBackgroundColor: string;
-    pointHoverBorderColor: string;
-    pointHoverBackgroundColor: string;
-}
-function compoundStringToColour(compoundString: string) {
-    switch (compoundString) {
-        case "SOFT":
-            return "red";
-        case "HARD":
-            return "white";
-        case "MEDIUM":
-            return "yellow";
-        default:
-            return "none";
-    }
-}
-
-interface LapChartProps {
-    name: string,
-    lapData: Racers
-}
-interface Driver {
-    Name: string;
-    Positions: number[];
-    Laps: number[];
-    TeamColor: string;
-    Compounds: string[];
-    LapTimes: any[];
-}
-interface Racers { [key: string]: Driver }
-
-interface contextType {
-    chart: ChartJS<keyof ChartTypeRegistry, (number | ScatterDataPoint | BubbleDataPoint | null)[], unknown>;
-    tooltip: TooltipModel<"line">;
-}
 const LapChart: React.FC<LapChartProps> = (props: LapChartProps) => { //TODO: endpoint data types
-
     const handleToolTip = (context: contextType) => {
         const tooltipModel = context.tooltip;
         if (!chart || !chart.current) return;
@@ -129,28 +41,22 @@ const LapChart: React.FC<LapChartProps> = (props: LapChartProps) => { //TODO: en
         }
         const position = context.chart.canvas.getBoundingClientRect();
         const CUR_DRIVER_SHORT_NAME: string = tooltipModel.dataPoints[0].dataset.label as string;
-        const longname = props.lapData[CUR_DRIVER_SHORT_NAME].Name;
-        const compound = props.lapData[CUR_DRIVER_SHORT_NAME].Compounds[tooltipModel.dataPoints[0].dataIndex];
-        const laptime = props.lapData[CUR_DRIVER_SHORT_NAME].LapTimes[tooltipModel.dataPoints[0].dataIndex];
-
-        const index = tooltipModel.dataPoints[0].datasetIndex;
-        const colour = tooltipModel.dataPoints[0].dataset.borderColor as string;
-        const border = (tooltipModel?.dataPoints[0]?.dataset?.borderDash as number[])[0] == 0 ? "solid" : "dashed";
         const newTooltipData = {
             opacity: 1,
             left: position.left + tooltipModel.caretX,
             top: position.top + tooltipModel.caretY,
             lap: tooltipModel.dataPoints[0].label,
             position: tooltipModel.dataPoints[0].formattedValue,
-            colour: colour,
-            border: border,
-            longname: longname,
-            compound: compound,
-            laptime: laptime,
+            colour: tooltipModel.dataPoints[0].dataset.borderColor as string,
+            border: (tooltipModel?.dataPoints[0]?.dataset?.borderDash as number[])[0] == 0 ? "solid" : "dashed",
+            longname: props.lapData[CUR_DRIVER_SHORT_NAME].Name,
+            compound: props.lapData[CUR_DRIVER_SHORT_NAME].Compounds[tooltipModel.dataPoints[0].dataIndex],
+            laptime: props.lapData[CUR_DRIVER_SHORT_NAME].LapTimes[tooltipModel.dataPoints[0].dataIndex],
 
         };
         if (!isEqual(tooltip, newTooltipData)) setTooltip(newTooltipData);
     };
+
     // TODO: SPINNER
     if (!Object.entries(props.lapData)) {
         return <div style={{ color: "red" }}>NO LAP DATA</div>;

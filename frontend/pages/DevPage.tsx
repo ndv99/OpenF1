@@ -1,4 +1,5 @@
-// import YearSelector from "./components/YearSelector";
+// import YearSelector from "../components/YearSelector";
+
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 import LapChart from "./components/LapChart/LapChart";

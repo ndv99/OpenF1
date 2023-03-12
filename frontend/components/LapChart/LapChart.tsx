@@ -7,10 +7,6 @@ import {
     Title,
     Tooltip,
     Legend,
-    TooltipModel,
-    ChartTypeRegistry,
-    BubbleDataPoint,
-    ScatterDataPoint,
 } from "chart.js";
 
 import isEqual from "lodash.isequal";
@@ -26,7 +22,7 @@ ChartJS.register(
 );
 import { Line } from "react-chartjs-2";
 import { useRef, useState } from "react";
-import { contextType, Driver, LapChartProps, Racers } from "./LapChartTypes";
+import { contextType, LapChartProps } from "./LapChartTypes";
 import { compoundStringToColour, createDataObjectFromLapData } from "./LapChartHelpers";
 
 
@@ -78,7 +74,6 @@ const LapChart: React.FC<LapChartProps> = (props: LapChartProps) => { //TODO: en
     });
     const lapData = createDataObjectFromLapData(props.lapData);
     const title: string = props.name;
-
     return (
         <div id='lap-chart-wrapper'>
             <Line data={lapData} ref={chart}

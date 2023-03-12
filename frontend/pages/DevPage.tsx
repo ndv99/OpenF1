@@ -2,7 +2,7 @@
 
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
-import LapChart from "./components/LapChart/LapChart";
+import LapChart from "../components/LapChart/LapChart";
 
 const DevPage: NextPage = () => {
     const [year, setYear] = useState(0);
@@ -44,8 +44,7 @@ const DevPage: NextPage = () => {
             .then(
                 function (response: any) {
                     setRaceData(response.data);
-                    setYear(1); //hacky for linting
-
+                    // setYear(1); //hacky for linting
                 }
             )
             .catch(function (error: any) {

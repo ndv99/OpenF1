@@ -1,43 +1,60 @@
-import YearSelector from "../components/YearSelector";
+// import YearSelector from "../components/YearSelector";
+
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
+import LapChart from "../components/LapChart/LapChart";
+import YearSelector from "../components/YearSelector/YearSelector";
 
 const DevPage: NextPage = () => {
     const [year, setYear] = useState(0);
     const [events, setEvents] = useState([]);
+    const [raceData, setRaceData] = useState({ lapChartData: {} });
     const axios = require("axios").default;
 
-    const getEventsByYear = useCallback(() => {
-        axios
-            .get(
-                `/api/events/?year=${year}`,
+    // const getEventsByYear = useCallback(() => {
+    //     axios
+    //         .get(
+    //             `/api/events/?year=${year}`,
+    //         )
+    //         .then(function (response: any) {
+    //             setEvents(response.data);
+    //         })
+    //         .catch(function (error: any) {
+    //             setEvents([]);
+    //             console.error("Unable to get events for: ", year, error);
+    //         });
+    // }, [axios, year]);
+    // useEffect(() => {
+    //     if (year === 0) {
+    //         return;
+    //     }
+    //     getEventsByYear();
+    // }, [year, getEventsByYear]);
+
+    
+
+    if (!Object.entries(raceData.lapChartData).length) {
+
+        axios.get("/api/raceLapChart/?year=2022&event=Belgium")
+            .then(
+                function (response: any) {
+                    setRaceData(response.data);
+                    // setYear(1); //hacky for linting
+                }
             )
-            .then(function (response: any) {
-                setEvents(response.data);
-            })
             .catch(function (error: any) {
-                setEvents([]);
-                console.error("Unable to get events for: ", year, error);
+                setRaceData({ lapChartData: {} });
             });
-    }, [axios, year]);
-    useEffect(() => {
-        if (year === 0) {
-            return;
-        }
-        getEventsByYear();
-    }, [year, getEventsByYear]);
+    } else {
 
-    useEffect(() => {
-        if (year === 0) {
-            //TODO: this will be used when setting year via url query
-            return;
-        }
-        //TODO: setevents
-    }, [events, year]);
+    }
 
+    const lapDataProps = raceData.lapChartData;
     return (
         <div>
             <YearSelector setYear={setYear}></YearSelector>
+            {year}
+            {/* <LapChart lapData={lapDataProps} name={"Belgium 2022"}></LapChart> */}
         </div>
     );
 };

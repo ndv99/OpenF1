@@ -3,6 +3,7 @@
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 import LapChart from "../components/LapChart/LapChart";
+import YearSelector from "../components/YearSelector/YearSelector";
 
 const DevPage: NextPage = () => {
     const [year, setYear] = useState(0);
@@ -30,13 +31,7 @@ const DevPage: NextPage = () => {
     //     getEventsByYear();
     // }, [year, getEventsByYear]);
 
-    useEffect(() => {
-        if (year === 0) {
-            //TODO: this will be used when setting year via url query
-            return;
-        }
-        //TODO: setevents
-    }, [events, year]);
+    
 
     if (!Object.entries(raceData.lapChartData).length) {
 
@@ -57,8 +52,9 @@ const DevPage: NextPage = () => {
     const lapDataProps = raceData.lapChartData;
     return (
         <div>
-            {/* <YearSelector setYear={setYear}></YearSelector> */}
-            <LapChart lapData={lapDataProps} name={"Belgium 2022"}></LapChart>
+            <YearSelector setYear={setYear}></YearSelector>
+            {year}
+            {/* <LapChart lapData={lapDataProps} name={"Belgium 2022"}></LapChart> */}
         </div>
     );
 };

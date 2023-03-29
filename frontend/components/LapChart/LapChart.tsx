@@ -11,6 +11,8 @@ import {
 
 import isEqual from "lodash.isequal";
 
+import styles from "./LapChart.module.scss";
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -75,7 +77,7 @@ const LapChart: React.FC<LapChartProps> = (props: LapChartProps) => { //TODO: en
     const lapData = createDataObjectFromLapData(props.lapData);
     const title: string = props.name;
     return (
-        <div id='lap-chart-wrapper'>
+        <div id='lap-chart-wrapper' className={styles.lapChartWrapper}>
             <Line data={lapData} ref={chart}
                 options={{
 
